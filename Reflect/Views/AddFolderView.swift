@@ -27,7 +27,7 @@ struct AddFolderView: View {
                     .padding(12)
                     .overlay(
                         Rectangle()
-                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                            .stroke(Color(.separator), lineWidth: 1)
                     )
                     .focused($isFocused)
                 

@@ -47,7 +47,7 @@ struct FolderDetailView: View {
                                             .lineLimit(2)
                                     }
                                     
-                                    Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
+                                    Text("Updated \(formattedDate(note.updatedAt))")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -125,6 +125,17 @@ struct FolderDetailView: View {
         modelContext.delete(note)
         try? modelContext.save()
         noteToDelete = nil
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) {
+            return "today"
+        } else if calendar.isDateInYesterday(date) {
+            return "yesterday"
+        } else {
+            return date.formatted(date: .abbreviated, time: .omitted)
+        }
     }
 }
 

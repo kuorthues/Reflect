@@ -29,44 +29,44 @@ struct EditNoteView: View {
             Divider()
                 .padding(.horizontal, 20)
             
-            TextEditor(text: $content)
-                .font(.body)
-                .foregroundStyle(.primary)
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            Divider()
-                .padding(.horizontal, 20)
-            
-            HStack {
-                Text("Updated \(note.updatedAt.formatted(date: .abbreviated, time: .shortened))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                Button(role: .destructive) {
-                    showingDeleteAlert = true
-                } label: {
-                    Text("Delete Note")
-                        .font(.caption)
-                        .foregroundStyle(.red)
+            ZStack(alignment: .topLeading) {
+                if content.isEmpty {
+                    Text("Start writing...")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .allowsHitTesting(false)
                 }
-                .buttonStyle(.plain)
+                
+                TextEditor(text: $content)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .scrollContentBackground(.hidden)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
         }
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
-                    saveChanges()
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 16) {
+                    Button(role: .destructive) {
+                        showingDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.red)
+                    }
+                    .accessibilityLabel("Delete Note")
+                    
+                    Button("Save") {
+                        saveChanges()
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(isSaveDisabled)
                 }
-                .fontWeight(.semibold)
-                .disabled(isSaveDisabled)
             }
         }
         .onAppear {

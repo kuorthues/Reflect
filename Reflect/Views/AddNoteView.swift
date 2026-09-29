@@ -31,12 +31,24 @@ struct AddNoteView: View {
                 Divider()
                     .padding(.horizontal, 20)
                 
-                TextEditor(text: $content)
-                    .font(.body)
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ZStack(alignment: .topLeading) {
+                    if content.isEmpty {
+                        Text("Start writing...")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 20)
+                            .allowsHitTesting(false)
+                    }
+                    
+                    TextEditor(text: $content)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .scrollContentBackground(.hidden)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
             .background(Color(.systemBackground))
             .navigationBarTitleDisplayMode(.inline)

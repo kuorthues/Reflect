@@ -87,23 +87,19 @@ struct FolderListView: View {
                     NavigationLink {
                         FolderDetailView(folder: folder)
                     } label: {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(folder.name)
                                 .font(.headline)
                                 .foregroundStyle(.primary)
                                 .lineLimit(1)
                             
-                            HStack(spacing: 6) {
-                                Text("\(folder.notes.count) \(folder.notes.count == 1 ? "note" : "notes")")
-                                Text("•")
-                                Text(folder.createdAt.formatted(date: .abbreviated, time: .omitted))
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            Text("\(folder.notes.count) \(folder.notes.count == 1 ? "note" : "notes")")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -119,13 +115,25 @@ struct FolderListView: View {
                             Label("Delete Folder", systemImage: "trash")
                         }
                     }
-                    
-                    // The shelf line
-                    Divider()
-                        .padding(.horizontal, 20)
+                    .overlay(alignment: .leading) {
+                        Rectangle()
+                            .fill(Color(.separator))
+                            .frame(width: 1)
+                    }
+                    .overlay(alignment: .trailing) {
+                        Rectangle()
+                            .fill(Color(.separator))
+                            .frame(width: 1)
+                    }
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(Color(.separator))
+                            .frame(height: 1)
+                    }
                 }
             }
-            .padding(.top, 4)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
             .padding(.bottom, 32)
         }
     }
