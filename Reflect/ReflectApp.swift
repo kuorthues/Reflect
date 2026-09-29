@@ -2,16 +2,16 @@
 //  ReflectApp.swift
 //  Reflect
 //
-//  Created by Mac-LAB on 9/29/26.
-//
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ReflectApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FolderListView()
         }
+        .modelContainer(for: [Folder.self, Note.self])
     }
 }
