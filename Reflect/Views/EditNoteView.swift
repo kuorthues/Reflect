@@ -17,69 +17,57 @@ struct EditNoteView: View {
     @State private var showingDeleteAlert = false
     
     var body: some View {
-        ZStack {
-            PaperTheme.paper
-                .ignoresSafeArea()
-            
-            VStack(alignment: .leading, spacing: 0) {
-                TextField("Title", text: $title, axis: .vertical)
-                    .font(.system(.title2, design: .serif).weight(.bold))
-                    .foregroundStyle(PaperTheme.ink)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 12)
-                
-                Rectangle()
-                    .fill(PaperTheme.divider)
-                    .frame(height: 1)
-                    .padding(.horizontal, 20)
-                
-                TextEditor(text: $content)
-                    .font(.system(.body, design: .serif))
-                    .foregroundStyle(PaperTheme.ink)
-                    .lineSpacing(6)
-                    .scrollContentBackground(.hidden)
-                    .background(PaperTheme.paper)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                Rectangle()
-                    .fill(PaperTheme.divider)
-                    .frame(height: 1)
-                    .padding(.horizontal, 20)
-                
-                HStack {
-                    Text("Updated \(note.updatedAt.formatted(date: .abbreviated, time: .shortened))")
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundStyle(PaperTheme.inkSecondary)
-                    
-                    Spacer()
-                    
-                    Button(role: .destructive) {
-                        showingDeleteAlert = true
-                    } label: {
-                        Text("Delete Note")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color.red.opacity(0.85))
-                    }
-                }
+        VStack(alignment: .leading, spacing: 0) {
+            TextField("Title", text: $title)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
                 .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(PaperTheme.paper)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+            
+            Divider()
+                .padding(.horizontal, 20)
+            
+            TextEditor(text: $content)
+                .font(.body)
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            Divider()
+                .padding(.horizontal, 20)
+            
+            HStack {
+                Text("Updated \(note.updatedAt.formatted(date: .abbreviated, time: .shortened))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                
+                Button(role: .destructive) {
+                    showingDeleteAlert = true
+                } label: {
+                    Text("Delete Note")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
         }
+        .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     saveChanges()
                 }
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(isSaveDisabled ? PaperTheme.inkSecondary.opacity(0.3) : PaperTheme.ink)
+                .fontWeight(.semibold)
                 .disabled(isSaveDisabled)
             }
-            .sharedBackgroundVisibility(.hidden)
         }
         .onAppear {
             title = note.title
@@ -93,7 +81,6 @@ struct EditNoteView: View {
         } message: {
             Text("Are you sure you want to delete this note?")
         }
-        .tint(PaperTheme.ink)
     }
     
     private var isSaveDisabled: Bool {
@@ -119,8 +106,8 @@ struct EditNoteView: View {
 }
 
 #Preview {
-    let folder = Folder(name: "Work")
-    let note = Note(title: "Meeting Notes", content: "Discuss project status and next steps.", folder: folder)
+    let folder = Folder(name: "School")
+    let note = Note(title: "SwiftData Notes", content: "Learn about @Model and @Query", folder: folder)
     return NavigationStack {
         EditNoteView(note: note)
     }

@@ -22,42 +22,56 @@ struct FolderDetailView: View {
     
     var body: some View {
         ZStack {
-            PaperTheme.screenBackground
+            Color(.systemBackground)
                 .ignoresSafeArea()
             
             if sortedNotes.isEmpty {
                 emptyNotesView
             } else {
-                List {
-                    ForEach(sortedNotes) { note in
-                        NavigationLink {
-                            EditNoteView(note: note)
-                        } label: {
-                            NotePaperRowView(note: note)
-                        }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(PaperTheme.screenBackground)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                noteToDelete = note
-                                showingDeleteAlert = true
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        ForEach(sortedNotes) { note in
+                            NavigationLink {
+                                EditNoteView(note: note)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(note.title)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    
+                                    if !note.content.isEmpty {
+                                        Text(note.content)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(2)
+                                    }
+                                    
+                                    Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 16)
+                                .contentShape(Rectangle())
                             }
-                        }
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                noteToDelete = note
-                                showingDeleteAlert = true
-                            } label: {
-                                Label("Delete Note", systemImage: "trash")
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    noteToDelete = note
+                                    showingDeleteAlert = true
+                                } label: {
+                                    Label("Delete Note", systemImage: "trash")
+                                }
                             }
+                            
+                            Divider()
+                                .padding(.horizontal, 20)
                         }
                     }
+                    .padding(.top, 4)
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
             }
         }
         .navigationTitle(folder.name)
@@ -69,7 +83,7 @@ struct FolderDetailView: View {
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundStyle(PaperTheme.ink)
+                        .foregroundStyle(.primary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Add Note")
@@ -92,41 +106,17 @@ struct FolderDetailView: View {
         } message: { note in
             Text("Are you sure you want to delete \"\(note.title)\"?")
         }
-        .tint(PaperTheme.ink)
     }
     
     private var emptyNotesView: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            
+        VStack(spacing: 8) {
             Text("No notes yet.")
-                .font(.system(.title3, design: .serif).weight(.medium))
-                .foregroundStyle(PaperTheme.ink)
+                .font(.headline)
+                .foregroundStyle(.primary)
             
-            Text("Create your first note.")
-                .font(.system(.subheadline))
-                .foregroundStyle(PaperTheme.inkSecondary)
-            
-            Button {
-                showingAddNote = true
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "plus")
-                    Text("New Note")
-                }
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(PaperTheme.ink)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .overlay(
-                    Rectangle()
-                        .stroke(PaperTheme.ink, lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 8)
-            
-            Spacer()
+            Text("Create a note to start writing.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -138,50 +128,8 @@ struct FolderDetailView: View {
     }
 }
 
-private struct NotePaperRowView: View {
-    let note: Note
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(note.title)
-                .font(.system(.headline, design: .serif).weight(.semibold))
-                .foregroundStyle(PaperTheme.ink)
-                .lineLimit(1)
-            
-            if !note.content.isEmpty {
-                Text(note.content)
-                    .font(.system(.subheadline, design: .serif))
-                    .foregroundStyle(PaperTheme.inkSecondary)
-                    .lineLimit(2)
-                    .lineSpacing(3)
-            }
-            
-            Rectangle()
-                .fill(PaperTheme.divider)
-                .frame(height: 1)
-                .padding(.top, 2)
-            
-            HStack {
-                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.system(size: 11, weight: .regular))
-                    .foregroundStyle(PaperTheme.inkSecondary)
-                
-                Spacer()
-            }
-        }
-        .padding(16)
-        .background(PaperTheme.paper)
-        .overlay(
-            Rectangle()
-                .stroke(PaperTheme.paperBorder, lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.03), radius: 1, x: 0, y: 1)
-        .contentShape(Rectangle())
-    }
-}
-
 #Preview {
-    let folder = Folder(name: "Journal")
+    let folder = Folder(name: "School")
     return NavigationStack {
         FolderDetailView(folder: folder)
     }

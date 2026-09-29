@@ -15,39 +15,30 @@ struct AddFolderView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                PaperTheme.screenBackground
-                    .ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Folder Name")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
                 
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Folder Name")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(PaperTheme.inkSecondary)
-                            .textCase(.uppercase)
-                            .tracking(0.5)
-                        
-                        TextField("e.g. Journal, Work, Reading", text: $folderName)
-                            .font(.system(.body, design: .serif))
-                            .foregroundStyle(PaperTheme.ink)
-                            .padding(14)
-                            .background(Color.white)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(PaperTheme.border, lineWidth: 1)
-                            )
-                            .focused($isFocused)
-                    }
-                    .padding(.top, 16)
-                    
-                    Text("Folders help you organize your notes into notebook sections.")
-                        .font(.system(size: 13, weight: .regular))
-                        .foregroundStyle(PaperTheme.inkSecondary)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
+                TextField("Folder name", text: $folderName)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                    .padding(12)
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                    )
+                    .focused($isFocused)
+                
+                Text("Folders organize your notes into shelves on your bookshelf.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
             }
+            .padding(20)
+            .background(Color(.systemBackground))
             .navigationTitle("New Folder")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -55,25 +46,20 @@ struct AddFolderView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(PaperTheme.inkSecondary)
                 }
-                .sharedBackgroundVisibility(.hidden)
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveFolder()
                     }
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(isSaveDisabled ? PaperTheme.inkSecondary.opacity(0.3) : PaperTheme.ink)
+                    .fontWeight(.semibold)
                     .disabled(isSaveDisabled)
                 }
-                .sharedBackgroundVisibility(.hidden)
             }
             .onAppear {
                 isFocused = true
             }
         }
-        .tint(PaperTheme.ink)
     }
     
     private var isSaveDisabled: Bool {
