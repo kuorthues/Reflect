@@ -18,36 +18,65 @@ struct AddNoteView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Title")) {
-                    TextField("Note title", text: $title)
-                        .focused($isTitleFocused)
-                }
+            ZStack {
+                PaperTheme.paper
+                    .ignoresSafeArea()
                 
-                Section(header: Text("Content")) {
+                VStack(alignment: .leading, spacing: 0) {
+                    TextField("Title", text: $title, axis: .vertical)
+                        .font(.system(.title2, design: .serif).weight(.bold))
+                        .foregroundStyle(PaperTheme.ink)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+                        .focused($isTitleFocused)
+                    
+                    Rectangle()
+                        .fill(PaperTheme.divider)
+                        .frame(height: 1)
+                        .padding(.horizontal, 20)
+                    
                     TextEditor(text: $content)
-                        .frame(minHeight: 200)
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(PaperTheme.ink)
+                        .lineSpacing(6)
+                        .scrollContentBackground(.hidden)
+                        .background(PaperTheme.paper)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .navigationTitle("New Note")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(PaperTheme.inkSecondary)
                 }
+                .sharedBackgroundVisibility(.hidden)
+                
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveNote()
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(isSaveDisabled ? PaperTheme.inkSecondary.opacity(0.3) : PaperTheme.ink)
+                    .disabled(isSaveDisabled)
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .onAppear {
                 isTitleFocused = true
             }
         }
+        .tint(PaperTheme.ink)
+    }
+    
+    private var isSaveDisabled: Bool {
+        title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private func saveNote() {

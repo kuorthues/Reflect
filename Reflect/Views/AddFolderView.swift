@@ -15,13 +15,38 @@ struct AddFolderView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    TextField("Folder name", text: $folderName)
-                        .focused($isFocused)
-                } footer: {
-                    Text("Folders help you organize your notes.")
+            ZStack {
+                PaperTheme.screenBackground
+                    .ignoresSafeArea()
+                
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Folder Name")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(PaperTheme.inkSecondary)
+                            .textCase(.uppercase)
+                            .tracking(0.5)
+                        
+                        TextField("e.g. Journal, Work, Reading", text: $folderName)
+                            .font(.system(.body, design: .serif))
+                            .foregroundStyle(PaperTheme.ink)
+                            .padding(14)
+                            .background(Color.white)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(PaperTheme.border, lineWidth: 1)
+                            )
+                            .focused($isFocused)
+                    }
+                    .padding(.top, 16)
+                    
+                    Text("Folders help you organize your notes into notebook sections.")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(PaperTheme.inkSecondary)
+                    
+                    Spacer()
                 }
+                .padding(.horizontal, 20)
             }
             .navigationTitle("New Folder")
             .navigationBarTitleDisplayMode(.inline)
@@ -30,18 +55,29 @@ struct AddFolderView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(PaperTheme.inkSecondary)
                 }
+                .sharedBackgroundVisibility(.hidden)
+                
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveFolder()
                     }
-                    .disabled(folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(isSaveDisabled ? PaperTheme.inkSecondary.opacity(0.3) : PaperTheme.ink)
+                    .disabled(isSaveDisabled)
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .onAppear {
                 isFocused = true
             }
         }
+        .tint(PaperTheme.ink)
+    }
+    
+    private var isSaveDisabled: Bool {
+        folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     private func saveFolder() {

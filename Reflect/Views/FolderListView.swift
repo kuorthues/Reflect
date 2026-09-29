@@ -20,20 +20,12 @@ struct FolderListView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                PaperTheme.screenBackground
+                    .ignoresSafeArea()
+                
                 if folders.isEmpty {
-                    ContentUnavailableView {
-                        Label("No Folders", systemImage: "folder")
-                    } description: {
-                        Text("Create a folder to start organizing your notes.")
-                    } actions: {
-                        Button {
-                            showingAddFolder = true
-                        } label: {
-                            Label("New Folder", systemImage: "plus")
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
+                    emptyStateView
                 } else {
                     List {
                         ForEach(folders) { folder in
@@ -42,13 +34,16 @@ struct FolderListView: View {
                             } label: {
                                 FolderRowView(folder: folder)
                             }
+                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(PaperTheme.screenBackground)
                             .swipeActions(edge: .leading) {
                                 Button {
                                     startRename(folder)
                                 } label: {
                                     Label("Rename", systemImage: "pencil")
                                 }
-                                .tint(.blue)
+                                .tint(PaperTheme.inkSecondary)
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
@@ -72,17 +67,24 @@ struct FolderListView: View {
                             }
                         }
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .navigationTitle("Reflect")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingAddFolder = true
                     } label: {
-                        Label("Add Folder", systemImage: "folder.badge.plus")
+                        Image(systemName: "plus")
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundStyle(PaperTheme.ink)
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Add Folder")
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $showingAddFolder) {
                 AddFolderView()
@@ -117,6 +119,45 @@ struct FolderListView: View {
                 }
             }
         }
+        .tint(PaperTheme.ink)
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            
+            Text("No folders yet.")
+                .font(.system(.title3, design: .serif).weight(.medium))
+                .foregroundStyle(PaperTheme.ink)
+            
+            Text("Create your first folder to start organizing notes.")
+                .font(.system(.subheadline))
+                .foregroundStyle(PaperTheme.inkSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            
+            Button {
+                showingAddFolder = true
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "plus")
+                    Text("New Folder")
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(PaperTheme.ink)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .overlay(
+                    Rectangle()
+                        .stroke(PaperTheme.ink, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private func startRename(_ folder: Folder) {
@@ -152,25 +193,35 @@ private struct FolderRowView: View {
     let folder: Folder
     
     var body: some View {
-        HStack {
-            Image(systemName: "folder.fill")
-                .foregroundStyle(.tint)
-                .font(.title2)
-            
-            VStack(alignment: .leading, spacing: 3) {
-                Text(folder.name)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+        VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 14) {
+                Image(systemName: "folder")
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundStyle(PaperTheme.inkSecondary)
                 
-                Text("\(folder.notes.count) \(folder.notes.count == 1 ? "note" : "notes")")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(folder.name)
+                        .font(.system(.body, design: .serif).weight(.medium))
+                        .foregroundStyle(PaperTheme.ink)
+                    
+                    HStack(spacing: 6) {
+                        Text("\(folder.notes.count) \(folder.notes.count == 1 ? "note" : "notes")")
+                        Text("—")
+                        Text(folder.createdAt.formatted(date: .abbreviated, time: .omitted))
+                    }
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(PaperTheme.inkSecondary)
+                }
+                
+                Spacer()
             }
-            .padding(.leading, 4)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
             
-            Spacer()
+            Rectangle()
+                .fill(PaperTheme.divider)
+                .frame(height: 1)
         }
-        .padding(.vertical, 4)
     }
 }
 
