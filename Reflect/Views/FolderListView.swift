@@ -130,6 +130,7 @@ struct FolderListView: View {
         let trimmed = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
             folder.name = trimmed
+            try? modelContext.save()
         }
         folderToRename = nil
         renameText = ""
@@ -142,6 +143,7 @@ struct FolderListView: View {
     
     private func deleteFolder(_ folder: Folder) {
         modelContext.delete(folder)
+        try? modelContext.save()
         folderToDelete = nil
     }
 }

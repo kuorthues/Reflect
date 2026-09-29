@@ -50,6 +50,7 @@ struct AddFolderView: View {
         
         let newFolder = Folder(name: trimmedName)
         modelContext.insert(newFolder)
+        try? modelContext.save()
         dismiss()
     }
 }
